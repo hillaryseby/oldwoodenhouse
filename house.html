@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>House</title>
+  </head>
+  <body>
+    <script src="http://threejs.org/build/three.js"></script>
+    <script type="module" src="GLTFLoader.js"></script>
+
+    <script type="module">
+        import {GLTFLoader} from "./GLTFLoader.js";
+        /* Library files are:GLTFLoader.js, OrbitControls.js, three.js, three.module.js
+         just to make sure the output works.
+         File we are working on is house.html
+         Names: Darrel Asare,  Hillary Sebastian, Zeng Lei
+         References: https://sketchfab.com/3d-models/old-russian-house-be5c284793b149d1bc3e359bd8c44cdc#download
+        */
+        // make the scene
+        window.onload = function() { // one big function for all our JavaScript code
+        var scene = new THREE.Scene();
+        scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        // load the house
+        var loader = new GLTFLoader();
+        var obj;
+        loader.load("scene.gltf", function (gltf) {
+          obj = gltf.scene;
+          scene.add(gltf.scene);
+        });
+
+        // white background to actually see the object
+        scene.background = new THREE.Color(0xffffff);
+
+        // light the place
+        var light = new THREE.HemisphereLight(0xffffff, 0x000000, 8);
+        scene.add(light);
+        camera.position.set(0, 100, 1000);
+
+
+        // Make movement controls using WASD keys
+        var keyArry = {};
+        var move;
+        var walk = { height:1.8, speed:1.7, turnSpeed:Math.PI*0.02 };
+
+        function animate() {
+      	requestAnimationFrame( animate );
+        if(move) move.rotation.x += 0.01;
+        if(move) move.rotation.y += 0.02;
+
+        	if(keyArry[87]){ // W key
+        		camera.position.x += Math.sin(camera.rotation.y) * walk.speed;
+        		camera.position.z += -Math.cos(camera.rotation.y) * walk.speed;
+        	}
+        	if(keyArry[83]){ // S key
+        		camera.position.x -= Math.sin(camera.rotation.y) * walk.speed;
+        		camera.position.z -= -Math.cos(camera.rotation.y) * walk.speed;
+        	}
+        	if(keyArry[65]){ // A key
+        		camera.position.x -= Math.sin(camera.rotation.y + Math.PI/2) * walk.speed;
+        		camera.position.z -= -Math.cos(camera.rotation.y + Math.PI/2) * walk.speed;
+        	}
+        	if(keyArry[68]){ // D key
+        		camera.position.x -= Math.sin(camera.rotation.y - Math.PI/2) * walk.speed;
+        		camera.position.z -= -Math.cos(camera.rotation.y - Math.PI/2) * walk.speed;
+        	}
+
+        	if(keyArry[37]){ // left arrow key
+        		camera.rotation.y -= walk.turnSpeed;
+        	}
+        	if(keyArry[39]){ // right arrow key
+        		camera.rotation.y += walk.turnSpeed;
+        	}
+
+      	renderer.render( scene, camera );
+      }
+
+      function keyDown(event){
+      	keyArry[event.keyCode] = true;
+      }
+
+      function keyUp(event){
+      	keyArry[event.keyCode] = false;
+      }
+
+      window.addEventListener('keydown', keyDown);
+      window.addEventListener('keyup', keyUp);
+      animate();
+
+};
+</script>
+
+
+  </body>
+</html>
